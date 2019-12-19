@@ -17,7 +17,7 @@ multi method new(--> ::?CLASS:D)
 {
     self.new(
         :rsync-url<rsync://cpan-rsync.perl.org/CPAN>,
-        :http-url<https://www.cpan.org/>,
+        :http-url<https://www.cpan.org>,
     );
 }
 
