@@ -54,6 +54,6 @@ method !process-output(::?CLASS:D: IO::Handle:D $_ --> Seq:D)
     .lines
     ==> grep    *.ends-with(any(@archive-file-extensions))
     ==> map     *.split(/\s+/)[4]
-    ==> grep    !*.contains(‘id/P/PS/PSIXDISTS/’)
+    ==> grep    !*.starts-with(‘id/P/PS/PSIXDISTS/’)
     ==> map     “$!http-url/authors/” ~ *
 }
