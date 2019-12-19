@@ -2,7 +2,10 @@
     "name": "crai",
     "provides": {
         "CRAI::ArchiveListing": "lib/CRAI/ArchiveListing.pm6",
+        "CRAI::ArchiveListing::Aggregate": "lib/CRAI/ArchiveListing/Aggregate.pm6",
         "CRAI::ArchiveListing::CPAN": "lib/CRAI/ArchiveListing/CPAN.pm6",
+        "CRAI::ArchiveListing::Ecosystem": "lib/CRAI/ArchiveListing/Ecosystem.pm6",
+        "CRAI::ArchiveListing::GitHub": "lib/CRAI/ArchiveListing/GitHub.pm6",
         "CRAI::Main": "lib/CRAI/Main.pm6"
     }
 }
