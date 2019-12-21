@@ -3,6 +3,7 @@ unit class CRAI::Database;
 use DBDish::Connection;
 use DBDish::StatementHandle;
 use DBIish;
+use Digest::SHA:from<Perl5> <sha256_hex>;
 use Terminal::ANSIColor;
 
 has DBDish::Connection $!sqlite;
@@ -45,6 +46,19 @@ submethod BUILD(IO::Path:D :$path)
     $!archives.mkdir;
 }
 
+has DBDish::StatementHandle $!list-archives-sth;
+method list-archives(::?CLASS:D: --> Seq:D)
+{
+    $!list-archives-sth //= $!sqlite.prepare(q:to/SQL/);
+        SELECT url
+        FROM archives
+        SQL
+
+    $!list-archives-sth.execute;
+
+    $!list-archives-sth.allrows(:array-of-hash);
+}
+
 has DBDish::StatementHandle $!ensure-archive-sth;
 method ensure-archive(::?CLASS:D: Str:D $url --> Nil)
 {
@@ -57,8 +71,26 @@ method ensure-archive(::?CLASS:D: Str:D $url --> Nil)
     $!ensure-archive-sth.execute($url);
 
     if $!ensure-archive-sth.rows == 0 {
-        note color(‘blue’), ‘[OLD]’, color(‘reset’), ‘ ’, $url;
+        log ‘blue’, ‘EXISTS’, $url;
     } else {
-        note color(‘green’), ‘[NEW]’, color(‘reset’), ‘ ’, $url;
+        log ‘green’, ‘NEW’, $url;
     }
+}
+
+method retrieve-archive(::?CLASS:D: Str:D $url --> Nil)
+{
+    my $url-hash := sha256_hex($url);
+    my $filename := $!archives.child($url-hash);
+
+    if $filename ~~ :e {
+        log ‘blue’, ‘EXISTS’, “$url @ $filename”;
+    } else {
+        log ‘green’, ‘NEW’, “$url → $filename”;
+        run «curl --fail --location --output “$filename” “$url”»;
+    }
+}
+
+sub log(Str:D $color, Str:D $status, Str:D $message --> Nil)
+{
+    note color($color), “[$status]”, color(‘reset’), ‘ ’, $message;
 }
