@@ -132,5 +132,5 @@ method !ls-remote(::?CLASS:D: --> Seq:D)
 
 method !archive-url(::?CLASS:D: Str:D $commit --> Str:D)
 {
-    “https://github.com/$!owner/$!repository/archives/$commit.tar.gz”;
+    “https://github.com/$!owner/$!repository/archive/$commit.tar.gz”;
 }
