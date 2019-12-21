@@ -25,8 +25,6 @@ submethod BUILD(IO::Path:D :$path)
         CREATE TABLE IF NOT EXISTS archives (
             url                     text    NOT NULL,
 
-            filename                text,
-
             md5_hash                text,
             sha1_hash               text,
             sha256_hash             text,
