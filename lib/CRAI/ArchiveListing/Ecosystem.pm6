@@ -26,7 +26,10 @@ multi method new(Str:D :$projects-json-url --> ::?CLASS:D)
 
 method archive-listings(::?CLASS:D: --> Seq:D)
 {
-    self!source-urls.map: { CRAI::ArchiveListing::GitHub.new(:url($_)) };
+    self!source-urls.map: {
+        my $github := try CRAI::ArchiveListing::GitHub.new(:url($_));
+        $! ?? do { warn $!; Empty } !! $github;
+    };
 }
 
 #| Retrieve all source URLs mentioned in I«projects.json».
