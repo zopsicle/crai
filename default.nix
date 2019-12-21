@@ -4,9 +4,15 @@ in
     pkgs.raku-nix.rakuPackage {
         name = "crai";
         src = pkgs.lib.cleanSource ./.;
-        depends = [pkgs.raku-nix.Pod-To-HTML];
+        depends = [
+            pkgs.raku-nix.DBIish
+            pkgs.raku-nix.Pod-To-HTML
+            pkgs.raku-nix.Terminal-ANSIColor
+        ];
         postInstallPhase = ''
+            ldLibraryPath=${pkgs.lib.makeLibraryPath [pkgs.sqlite]}
             wrapProgram $out/bin/crai \
+                --set LD_LIBRARY_PATH $ldLibraryPath \
                 --prefix PATH : ${pkgs.curl}/bin \
                 --prefix PATH : ${pkgs.git}/bin \
                 --prefix PATH : ${pkgs.jq}/bin \

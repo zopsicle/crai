@@ -6,6 +6,7 @@
         "CRAI::ArchiveListing::CPAN": "lib/CRAI/ArchiveListing/CPAN.pm6",
         "CRAI::ArchiveListing::Ecosystem": "lib/CRAI/ArchiveListing/Ecosystem.pm6",
         "CRAI::ArchiveListing::GitHub": "lib/CRAI/ArchiveListing/GitHub.pm6",
+        "CRAI::Database": "lib/CRAI/Database.pm6",
         "CRAI::Main": "lib/CRAI/Main.pm6"
     }
 }
