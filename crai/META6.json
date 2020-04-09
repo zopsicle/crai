@@ -1,0 +1,10 @@
+{
+    "name": "crai",
+    "version": "2.0.0",
+    "provides": {
+        "Crai::Database": "lib/Crai/Database.rakumod"
+    },
+    "depends": [
+        "DBIish"
+    ]
+}

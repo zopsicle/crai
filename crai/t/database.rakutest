@@ -1,0 +1,51 @@
+use Crai::Database;
+use DBIish;
+use Test;
+
+plan(1);
+
+my $dbh := DBIish.connect('SQLite', database => ':memory:');
+my $db  := Crai::Database.new(:$dbh);
+$db.setup;
+
+my $run-when    := now;
+my $archive-url := 'https://www.cpan.org/authors/id/C/CH/CHLOEKEK/Perl6/Template-Classic-0.0.2.tar.gz';
+my %hashes      := {
+    hash-md5    => '6cd3556deb0da54bca060b4c39479839',
+    hash-sha1   => '943a702d06f34599aee1f8da8ef9f7296031d699',
+    hash-sha256 => '315f5bdb76d078c43b8ac0064e4a0164612b1fce77c869345bfc94c75894edd3',
+};
+my %meta        := {
+    meta-perl                   => '6.d',
+    meta-name                   => 'crai',
+    meta-version                => '2.3.*.4',
+    meta-description            => ｢Comprehensive Raku Archive Index｣,
+    meta-support-email          => 'chloekek@gmail.com',
+    meta-support-mailinglist    => Nil,
+    meta-support-bugtracker     => 'https://github.com/chloekek/crai/issues',
+    meta-support-source         => 'https://github.com/chloekek/crai',
+    meta-support-irc            => Nil,
+    meta-support-phone          => Nil,
+    meta-production             => True,
+    meta-license                => 'AGPL-3.0-only',
+    meta-authors                => <chloekek johndoe>,
+    meta-provides               => { 'Foo::Bar' => 'lib/Foo/Bar.rakumod' },
+    meta-depends                => { runtime => <DBIish JSON::Fast> },
+    meta-emulates               => { 'Foo::Bar' => 'Baz::Qux' },
+    meta-resources              => <crai.css crai.svg>,
+    meta-tags                   => <database web>,
+};
+$db.insert-archive($archive-url);
+$db.update-archive-hashes($archive-url, |%hashes);
+$db.update-archive-meta($archive-url, |%meta);
+$db.insert-run($run-when);
+$db.insert-encounter($run-when, $archive-url);
+$db.insert-warning($archive-url, ｢Something is wrong｣);
+
+my $sth := $dbh.prepare(q:to/SQL/);
+    SELECT norm_version
+    FROM   archives
+    WHERE  url = ?1
+    SQL
+$sth.execute($archive-url);
+is $sth.row[0], '00000002.00000003.00000000.00000004.00000000.00000000';
