@@ -1,0 +1,138 @@
+*
+{
+    box-sizing: border-box;
+}
+
+body
+{
+    font-family: "Liberation Sans", sans-serif;
+    margin: 0;
+}
+
+.crai--light
+{
+    background-color: #FFFFFF;
+    color: #222222;
+    --primary:   #8783B9;
+    --secondary: #FDFEA8;
+    --tertiary:  #FFD7A8;
+}
+
+.crai--dark
+{
+    background-color: #222222;
+    color: #DDDDDD;
+    --primary:   #977608;
+    --secondary: #450A65;
+    --tertiary:  #09455F;
+}
+
+body > nav,
+body > header,
+body > section,
+body > footer
+{
+    padding: 1.5rem;
+}
+
+body > nav > div,
+body > header > div,
+body > section > div,
+body > footer > div
+{
+    margin: 0 auto;
+    max-width: 60rem;
+}
+
+body > nav
+{
+    background-color: var(--tertiary);
+}
+
+body > nav > div > a
+{
+    background-image: url("/static/crai.svg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    color: transparent;
+    display: inline-block;
+    height: 48px;
+    width: 48px;
+}
+
+body > header
+{
+    background-color: var(--primary);
+}
+
+body > header > div > h1
+{
+    font-family: "Montserrat", "Liberation Sans", sans-serif;
+    font-size: 3rem;
+    font-weight: bold;
+    line-height: 1.5em;
+}
+
+body > header > div > p
+{
+    font-size: 1.5rem;
+    line-height: 1.5em;
+}
+
+body > section > div h2
+{
+    font-family: "Montserrat", "Liberation Sans", sans-serif;
+    font-size: 2rem;
+    font-weight: bold;
+    line-height: 1.5em;
+}
+
+body > section > div h2:not(:first-child)
+{
+    margin-top: 1rem;
+}
+
+body > section > div p
+{
+    line-height: 1.5em;
+}
+
+body > section > div ul
+{
+    list-style: square;
+    padding-left: 1rem;
+}
+
+body > section > div li
+{
+    line-height: 1.5em;
+}
+
+body > section > div .craw--properties > tbody > tr > th
+{
+    font-weight: bold;
+    line-height: 1.5em;
+    text-align: left;
+    width: 6rem;
+}
+
+body > section > div .craw--properties > tbody > tr > td
+{
+    line-height: 1.5em;
+}
+
+body > footer
+{
+    background-color: var(--secondary);
+}
+
+body > footer > div a
+{
+    color: inherit;
+}
+
+body > footer > div p
+{
+    line-height: 1.5em;
+}

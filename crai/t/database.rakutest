@@ -4,7 +4,7 @@ use Test;
 
 plan(1);
 
-my $dbh := DBIish.connect('SQLite', database => ':memory:');
+my $dbh := DBIish.connect('SQLite', database => '/tmp/crai.sqlite3'.IO);
 my $db  := Crai::Database.new(:$dbh);
 $db.setup;
 
@@ -29,7 +29,8 @@ my %meta        := {
     meta-production             => True,
     meta-license                => 'AGPL-3.0-only',
     meta-authors                => <chloekek johndoe>,
-    meta-provides               => { 'Foo::Bar' => 'lib/Foo/Bar.rakumod' },
+    meta-provides               => { 'Foo::Bar' => 'lib/Foo/Bar.rakumod',
+                                     'Foo::Bar::Baz' => 'lib/Foo/Bar/Baz.pm6' },
     meta-depends                => { runtime => <DBIish JSON::Fast> },
     meta-emulates               => { 'Foo::Bar' => 'Baz::Qux' },
     meta-resources              => <crai.css crai.svg>,
