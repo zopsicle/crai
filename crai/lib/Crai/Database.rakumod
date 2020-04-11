@@ -178,6 +178,111 @@ method fetch-archive-urls(
     $sth.allrows.map(*[0]);
 }
 
+method fetch-archive(
+    ::?CLASS:D:
+    Str() $url,
+)
+{
+    my %archive = do {
+        my $sth := self!sth(q:to/SQL/);
+            SELECT
+                url,
+
+                hash_md5,
+                hash_sha1,
+                hash_sha256,
+
+                meta_perl,
+                meta_name,
+                meta_version,
+                meta_description,
+                meta_support_email,
+                meta_support_mailinglist,
+                meta_support_bugtracker,
+                meta_support_source,
+                meta_support_irc,
+                meta_support_phone,
+                meta_production,
+                meta_license
+
+            FROM
+                archives
+
+            WHERE
+                url = ?1
+            SQL
+        $sth.execute($url);
+        $sth.column-names.map({S:g/_/-/}) Z=> $sth.row;
+    };
+
+    return {} unless %archive;
+
+    %archive<meta-authors> = do {
+        my $sth := self!sth(q:to/SQL/);
+            SELECT   author
+            FROM     meta_authors
+            WHERE    archive_url = ?1
+            ORDER BY author
+            SQL
+        $sth.execute(%archive<url>);
+        $sth.allrows.map(*[0]).list;
+    };
+
+    %archive<meta-provides> = do {
+        my $sth := self!sth(q:to/SQL/);
+            SELECT unit, file
+            FROM   meta_provides
+            WHERE  archive_url = ?1
+            SQL
+        $sth.execute(%archive<url>);
+        $sth.allrows.map({ [=>] @^a }).hash;
+    };
+
+    %archive<meta-depends> = do {
+        my $sth := self!sth(q:to/SQL/);
+            SELECT phase, use
+            FROM   meta_depends
+            WHERE  archive_url = ?1
+            SQL
+        $sth.execute(%archive<url>);
+        $sth.allrows.classify(*[0], as => *[1]);
+    };
+
+    %archive<meta-emulates> = do {
+        my $sth := self!sth(q:to/SQL/);
+            SELECT unit, use
+            FROM   meta_emulates
+            WHERE  archive_url = ?1
+            SQL
+        $sth.execute(%archive<url>);
+        $sth.allrows.map({ [=>] @^a }).hash;
+    };
+
+    %archive<meta-resources> = do {
+        my $sth := self!sth(q:to/SQL/);
+            SELECT   resource
+            FROM     meta_resources
+            WHERE    archive_url = ?1
+            ORDER BY resource
+            SQL
+        $sth.execute(%archive<url>);
+        $sth.allrows.map(*[0]).list;
+    };
+
+    %archive<meta-tags> = do {
+        my $sth := self!sth(q:to/SQL/);
+            SELECT   tag
+            FROM     meta_tags
+            WHERE    archive_url = ?1
+            ORDER BY tag
+            SQL
+        $sth.execute(%archive<url>);
+        $sth.allrows.map(*[0]).list;
+    };
+
+    %archive;
+}
+
 method insert-archive(
     ::?CLASS:D:
     Str() $url,
