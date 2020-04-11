@@ -13,18 +13,18 @@ body
 {
     background-color: #FFFFFF;
     color: #222222;
-    --primary:   #8783B9;
-    --secondary: #FDFEA8;
-    --tertiary:  #FFD7A8;
+    --primary:   #2E6EA6; --primary-contra:  #FFFFFF;
+    --secondary: #F2D3AC;
+    --tertiary:  #402414; --tertiary-contra: #FFFFFF;
 }
 
 .crai--dark
 {
     background-color: #222222;
     color: #DDDDDD;
-    --primary:   #977608;
-    --secondary: #450A65;
-    --tertiary:  #09455F;
+    --primary:   #402414; --primary-contra:  #DDDDDD;
+    --secondary: #2E6EA6;
+    --tertiary:  #402414; --tertiary-contra: #DDDDDD;
 }
 
 body > nav,
@@ -46,7 +46,7 @@ body > footer > div
 
 body > nav
 {
-    background-color: var(--tertiary);
+    background-color: var(--secondary);
 }
 
 body > nav > div > a
@@ -64,6 +64,7 @@ body > nav > div > a
 body > header
 {
     background-color: var(--primary);
+    color: var(--primary-contra);
 }
 
 body > header > div > h1
@@ -124,7 +125,8 @@ body > section > div .craw--properties > tbody > tr > td
 
 body > footer
 {
-    background-color: var(--secondary);
+    background-color: var(--tertiary);
+    color: var(--tertiary-contra);
 }
 
 body > footer > div a

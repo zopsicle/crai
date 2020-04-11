@@ -4,7 +4,7 @@ require_once __DIR__ . '/../lib/Craw/Database.php';
 require_once __DIR__ . '/../lib/Craw/Layout.php';
 
 $dbh = new SQLite3('/tmp/crai.sqlite3', SQLITE3_OPEN_READONLY);
-$archive = Craw\Database\fetch_archive($dbh, 'https://www.cpan.org/authors/id/C/CH/CHLOEKEK/Perl6/Template-Classic-0.0.2.tar.gz');
+$archive = Craw\Database\fetch_archive($dbh, 'https://www.cpan.org/authors/id/E/EL/ELIZABETH/Perl6/Array-Agnostic-0.0.6.tar.gz');
 
 Craw\Layout\layout(
     $archive['meta_name'] . ' ' . $archive['meta_version'],
