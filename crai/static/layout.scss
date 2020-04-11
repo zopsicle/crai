@@ -1,0 +1,56 @@
+$unit-rem: 1.5rem;
+$unit-em: 1.5em;
+
+*
+{
+    box-sizing: border-box;
+}
+
+body
+{
+    margin: 0;
+
+    & > header > div > h1,
+    & > header > div > p,
+    & > section > div h2,
+    & > section > div p,
+    & > section > div li,
+    & > section > div .crai--properties > tbody > tr > th,
+    & > section > div .crai--properties > tbody > tr > td,
+    & > footer > div > p
+    {
+        line-height: $unit-em;
+    }
+
+    & > nav,
+    & > header,
+    & > section,
+    & > footer
+    {
+        padding: $unit-rem;
+
+        & > div
+        {
+            margin: 0 auto;
+            max-width: 60rem;
+        }
+    }
+
+    > section > div
+    {
+        h2:not(:first-child)
+        {
+            margin-top: $unit-rem;
+        }
+
+        p
+        {
+            & + p,
+            & + ul,
+            & + ol
+            {
+                margin-top: $unit-rem;
+            }
+        }
+    }
+}

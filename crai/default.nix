@@ -1,4 +1,4 @@
-{ curl, lib, libressl, perl, raku, rakudo, sqlite }:
+{ curl, lib, libressl, perl, raku, rakudo, sassc, sqlite }:
 let
     meta6 = builtins.fromJSON (builtins.readFile ./META6.json);
     get-depend = p: raku."${builtins.replaceStrings ["::"] ["-"] p}";
@@ -9,6 +9,7 @@ in
         depends = map get-depend meta6.depends;
         preInstallPhase = ''
             export LD_LIBRARY_PATH=${lib.makeLibraryPath [ curl libressl sqlite ]}
+            ${sassc}/bin/sassc --precision 10 static/style.scss static/style.css
         '';
         postInstallPhase = ''
             makeWrapper ${perl}/bin/prove $out/bin/crai.prove       \
@@ -21,5 +22,8 @@ in
                 wrapProgram $p                                      \
                     --set LD_LIBRARY_PATH $LD_LIBRARY_PATH
             done
+
+            mkdir --parents $out
+            mv static $out
         '';
     }

@@ -178,6 +178,18 @@ method fetch-archive-urls(
     $sth.allrows.map(*[0]);
 }
 
+method fetch-archive-count(
+    ::?CLASS:D:
+)
+{
+    my $sth := self!sth(q:to/SQL/);
+        SELECT COUNT(*)
+        FROM   archives
+        SQL
+    $sth.execute;
+    $sth.row[0];
+}
+
 method fetch-archive(
     ::?CLASS:D:
     Str() $url,

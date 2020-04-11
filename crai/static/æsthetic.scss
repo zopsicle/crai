@@ -1,0 +1,129 @@
+.crai--light
+{
+    background-color: #FFFFFF;
+    color: #222222;
+    --primary:   #2E6EA6; --primary-contra:  #FFFFFF;
+    --secondary: #F2D3AC;
+    --tertiary:  #F2D3AC; --tertiary-contra: #222222;
+}
+
+.crai--dark
+{
+    background-color: #222222;
+    background-image: url("/static/darkbg.png");
+    color: #DDDDDD;
+    --primary:   #2E6EA6; --primary-contra:  #DDDDDD;
+    --secondary: #402414;
+    --tertiary:  #402414; --tertiary-contra: #DDDDDD;
+}
+
+body
+{
+    font-family: "Liberation Sans", sans-serif;
+
+    > nav
+    {
+        background-color: var(--secondary);
+
+        & > div > a
+        {
+            background-image: url("/static/crai.svg");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            color: transparent;
+            display: inline-block;
+            height: 48px;
+            width: 48px;
+        }
+    }
+
+    & > header
+    {
+        background-color: var(--primary);
+        color: var(--primary-contra);
+
+        & > div
+        {
+            & > h1
+            {
+                font-family: "Montserrat", "Liberation Sans", sans-serif;
+                font-size: 3rem;
+                font-weight: bold;
+            }
+
+            & > p
+            {
+                font-size: 1.5rem;
+            }
+        }
+    }
+
+    & > section > div
+    {
+        h2
+        {
+            font-family: "Montserrat", "Liberation Sans", sans-serif;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        a
+        {
+            color: inherit;
+        }
+
+        em
+        {
+            font-style: italic;
+        }
+
+        strong
+        {
+            font-weight: bold;
+        }
+
+        sup,
+        .crai--footnotes > li
+        {
+            font-size: 0.8rem;
+            vertical-align: super;
+        }
+
+        ul
+        {
+            list-style: square;
+            padding-left: 1rem;
+        }
+
+        ol
+        {
+            list-style: decimal;
+            padding-left: 1rem;
+        }
+
+        .crai--properties > tbody > tr
+        {
+            & > th
+            {
+                font-weight: bold;
+                text-align: left;
+                width: 6rem;
+            }
+        }
+    }
+
+    & > footer
+    {
+        background-color: var(--tertiary);
+        color: var(--tertiary-contra);
+
+        & > div
+        {
+            a
+            {
+                color: inherit;
+            }
+        }
+    }
+}

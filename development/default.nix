@@ -11,6 +11,7 @@ stdenvNoCC.mkDerivation {
     phases = [ "unpackPhase" "installPhase" ];
     installPhase = ''
         mkdir --parents $out/bin $out/etc $out/www/cgi-bin
+        ln --symbolic $crai/static $out/www/static
 
         makeWrapper $hivemind/bin/hivemind $out/bin/crai.development    \
             --add-flags --root                                          \

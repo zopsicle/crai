@@ -4,7 +4,6 @@ let
         sha256 = "1bjn2wzzzv9v0z50z4mczy7c3ww3vixmsxrn4q44nza32fwcy87m";
     };
     config = {
-        php = import ./php.nix;
         packageOverrides = pkgs: {
             raku = pkgs.callPackage ./raku.nix {};
         };
