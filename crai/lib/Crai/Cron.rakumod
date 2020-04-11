@@ -22,7 +22,10 @@ my sub MAIN(
     my $dbh  := DBIish.connect('SQLite', :$database);
     my $db   := Crai::Database.new(:$dbh);
 
+    # TODO: Insert run.
+
     unless $skip-list-cpan-archives {
+        # TODO: Insert encounters.
         $db.insert-archive($_) for list-cpan-archives;
     }
 
@@ -42,11 +45,15 @@ my sub MAIN(
         for $db.fetch-archive-urls -> $archive-url {
             my $archive-path := archive-path($mirror, $archive-url);
             next unless $archive-path.s;
+            print("$archive-url ");
             try {
                 my $meta := read-meta($archive-path);
                 my %meta := from-json($meta);
-                say %meta;
+                my %norm := normalize-meta(%meta);
+                $db.update-archive-meta($archive-url, |%norm);
             }
+            with    $! { put("! $_") }
+            without $! { put("✔") }
         }
     }
 }
