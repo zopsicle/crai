@@ -4,6 +4,7 @@
     "provides": {
         "Crai::Archive": "lib/Crai/Archive.rakumod",
         "Crai::Database": "lib/Crai/Database.rakumod",
+        "Crai::Cgi": "lib/Crai/Cgi.rakumod",
         "Crai::Cpan": "lib/Crai/Cpan.rakumod",
         "Crai::Cron": "lib/Crai/Cron.rakumod",
         "Crai::Mirror": "lib/Crai/Mirror.rakumod"

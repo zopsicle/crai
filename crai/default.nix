@@ -17,10 +17,9 @@ in
                 --add-flags --exec                                  \
                 --add-flags ${rakudo}/bin/raku
 
-            wrapProgram $out/bin/crai.cron                          \
-                --set LD_LIBRARY_PATH $LD_LIBRARY_PATH
-
-            wrapProgram $out/bin/crai.cron.profile                  \
-                --set LD_LIBRARY_PATH $LD_LIBRARY_PATH
+            for p in $out/bin/crai.{cgi,cron}{,.profile}; do
+                wrapProgram $p                                      \
+                    --set LD_LIBRARY_PATH $LD_LIBRARY_PATH
+            done
         '';
     }
