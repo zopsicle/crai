@@ -4,9 +4,12 @@
     "provides": {
         "Crai::Database": "lib/Crai/Database.rakumod",
         "Crai::Cpan": "lib/Crai/Cpan.rakumod",
-        "Crai::Cron": "lib/Crai/Cron.rakumod"
+        "Crai::Cron": "lib/Crai/Cron.rakumod",
+        "Crai::Mirror": "lib/Crai/Mirror.rakumod"
     },
     "depends": [
-        "DBIish"
+        "DBIish",
+        "LibCurl",
+        "OpenSSL"
     ]
 }

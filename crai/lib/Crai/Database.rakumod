@@ -165,6 +165,19 @@ method !setup(::?CLASS:D: --> Nil)
         SQL
 }
 
+method fetch-archive-urls(
+    ::?CLASS:D:
+)
+{
+    my $sth := self!sth(q:to/SQL/);
+        SELECT   url
+        FROM     archives
+        ORDER BY url ASC
+        SQL
+    $sth.execute;
+    $sth.allrows.map(*[0]);
+}
+
 method insert-archive(
     ::?CLASS:D:
     Str() $url,
