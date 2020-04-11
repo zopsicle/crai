@@ -1,9 +1,11 @@
 unit module Crai::Cron;
 
+use Crai::Archive;
 use Crai::Cpan;
 use Crai::Database;
 use Crai::Mirror;
 use DBIish;
+use JSON::Fast;
 use LibCurl::Easy;
 
 my sub MAIN(
@@ -11,6 +13,7 @@ my sub MAIN(
     IO() :$mirror!,
     Bool :$skip-list-cpan-archives,
     Bool :$skip-download-archives,
+    Bool :$skip-extract-meta,
     --> Nil
 )
     is export
@@ -31,6 +34,18 @@ my sub MAIN(
                 when Exception { put("! $_"); noflood }
                 when IO::Path  { put("→ $_"); noflood }
                 when :present  { put("✔️") }
+            }
+        }
+    }
+
+    unless $skip-extract-meta {
+        for $db.fetch-archive-urls -> $archive-url {
+            my $archive-path := archive-path($mirror, $archive-url);
+            next unless $archive-path.s;
+            try {
+                my $meta := read-meta($archive-path);
+                my %meta := from-json($meta);
+                say %meta;
             }
         }
     }

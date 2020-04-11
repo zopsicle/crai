@@ -2,6 +2,7 @@
     "name": "crai",
     "version": "2.0.0",
     "provides": {
+        "Crai::Archive": "lib/Crai/Archive.rakumod",
         "Crai::Database": "lib/Crai/Database.rakumod",
         "Crai::Cpan": "lib/Crai/Cpan.rakumod",
         "Crai::Cron": "lib/Crai/Cron.rakumod",
@@ -9,6 +10,7 @@
     },
     "depends": [
         "DBIish",
+        "JSON::Fast",
         "LibCurl",
         "OpenSSL"
     ]
