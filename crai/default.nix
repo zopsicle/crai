@@ -13,5 +13,11 @@ in
                 --set LD_LIBRARY_PATH ${sqlite.out}/lib             \
                 --add-flags --exec                                  \
                 --add-flags ${rakudo}/bin/raku
+
+            wrapProgram $out/bin/crai.cron                          \
+                --set LD_LIBRARY_PATH ${sqlite.out}/lib             \
+
+            wrapProgram $out/bin/crai.cron.profile                  \
+                --set LD_LIBRARY_PATH ${sqlite.out}/lib             \
         '';
     }

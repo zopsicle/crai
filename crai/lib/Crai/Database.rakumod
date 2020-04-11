@@ -17,19 +17,26 @@ my sub normalize-version(Version() $_)
         .join('.');
 }
 
+method new(:$dbh)
+{
+    my $self := self.bless(:$dbh);
+    $self!setup;
+    $self;
+}
+
 method !sth(::?CLASS:D: Str() $sql)
 {
     %!sth{$sql} //= $!dbh.prepare($sql);
 }
 
-method setup(::?CLASS:D: --> Nil)
+method !setup(::?CLASS:D: --> Nil)
 {
     $!dbh.do(q:to/SQL/);
         -- An archive is a tarball retrieved from CPAN or GitHub.
         -- An archive contains exactly one distribution.
         -- This table stores metadata about the archive and distribution.
         -- Some metadata is stored in other tables, due to plurality.
-        CREATE TABLE archives (
+        CREATE TABLE IF NOT EXISTS archives (
             -- Unique URL and hashes of the archive.
             url                         TEXT    NOT NULL,
 
@@ -69,7 +76,7 @@ method setup(::?CLASS:D: --> Nil)
         SQL
 
     $!dbh.do(q:to/SQL/);
-        CREATE TABLE meta_authors (
+        CREATE TABLE IF NOT EXISTS meta_authors (
             archive_url                 TEXT    NOT NULL,
             author                      TEXT    NOT NULL,
             PRIMARY KEY (archive_url, author)
@@ -78,7 +85,7 @@ method setup(::?CLASS:D: --> Nil)
         SQL
 
     $!dbh.do(q:to/SQL/);
-        CREATE TABLE meta_provides (
+        CREATE TABLE IF NOT EXISTS meta_provides (
             archive_url                 TEXT    NOT NULL,
             unit                        TEXT    NOT NULL,
             file                        TEXT    NOT NULL,
@@ -88,7 +95,7 @@ method setup(::?CLASS:D: --> Nil)
         SQL
 
     $!dbh.do(q:to/SQL/);
-        CREATE TABLE meta_depends (
+        CREATE TABLE IF NOT EXISTS meta_depends (
             archive_url                 TEXT    NOT NULL,
             phase                       TEXT    NOT NULL,
             use                         TEXT    NOT NULL,
@@ -98,7 +105,7 @@ method setup(::?CLASS:D: --> Nil)
         SQL
 
     $!dbh.do(q:to/SQL/);
-        CREATE TABLE meta_emulates (
+        CREATE TABLE IF NOT EXISTS meta_emulates (
             archive_url                 TEXT    NOT NULL,
             unit                        TEXT    NOT NULL,
             use                         TEXT    NOT NULL,
@@ -108,7 +115,7 @@ method setup(::?CLASS:D: --> Nil)
         SQL
 
     $!dbh.do(q:to/SQL/);
-        CREATE TABLE meta_resources (
+        CREATE TABLE IF NOT EXISTS meta_resources (
             archive_url                 TEXT    NOT NULL,
             resource                    TEXT    NOT NULL,
             PRIMARY KEY (archive_url, resource)
@@ -117,7 +124,7 @@ method setup(::?CLASS:D: --> Nil)
         SQL
 
     $!dbh.do(q:to/SQL/);
-        CREATE TABLE meta_tags (
+        CREATE TABLE IF NOT EXISTS meta_tags (
             archive_url                 TEXT    NOT NULL,
             tag                         TEXT    NOT NULL,
             PRIMARY KEY (archive_url, tag)
@@ -128,7 +135,7 @@ method setup(::?CLASS:D: --> Nil)
     $!dbh.do(q:to/SQL/);
         -- Warnings about problems with an archive.
         -- For instance, mistakes in META6.json.
-        CREATE TABLE warnings (
+        CREATE TABLE IF NOT EXISTS warnings (
             archive_url                 TEXT    NOT NULL,
             message                     TEXT    NOT NULL,
             PRIMARY KEY (archive_url, message)
@@ -140,7 +147,7 @@ method setup(::?CLASS:D: --> Nil)
         -- A run is one invocation of the cron job that indexes archives.
         -- Each run is identified by the time at which it started.
         -- Runs are useful for tracking the state of the ecosystem over time.
-        CREATE TABLE runs (
+        CREATE TABLE IF NOT EXISTS runs (
             [when]                      TEXT    NOT NULL,
             PRIMARY KEY ([when])
         )
@@ -148,7 +155,7 @@ method setup(::?CLASS:D: --> Nil)
 
     $!dbh.do(q:to/SQL/);
         -- For each run, the set of archives that were found to exist.
-        CREATE TABLE encounters (
+        CREATE TABLE IF NOT EXISTS encounters (
             run_when                    TEXT    NOT NULL,
             archive_url                 TEXT    NOT NULL,
             PRIMARY KEY (run_when, archive_url)

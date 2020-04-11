@@ -4,9 +4,8 @@ use Test;
 
 plan(1);
 
-my $dbh := DBIish.connect('SQLite', database => '/tmp/crai.sqlite3'.IO);
+my $dbh := DBIish.connect('SQLite', database => ':memory:');
 my $db  := Crai::Database.new(:$dbh);
-$db.setup;
 
 my $run-when    := now;
 my $archive-url := 'https://www.cpan.org/authors/id/C/CH/CHLOEKEK/Perl6/Template-Classic-0.0.2.tar.gz';
