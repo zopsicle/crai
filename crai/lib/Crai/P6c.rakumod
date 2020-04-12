@@ -54,7 +54,8 @@ my sub list-github-archives(Str() $owner, Str() $repo)
     $git.out.lines
         ==> map  ({ .split(/\s+/) })
         ==> grep ({ !$++ || .[1] ne 'HEAD' })
-        ==> map  ({ "$url/archive/{.[0]}.tar.gz" });
+        ==> grep ({ .[1] !~~ /'^{}'/ })  # Skip hashes of annotated tags.
+        ==> map  ({ "$url/archive/{.[0]}.tar.gz" })
 }
 
 =begin pod
@@ -91,5 +92,9 @@ C<$projects-url>, if given, must be the URL of the p6c I<projects.json> file.
 =head1 BUGS
 
 Does not support Git repositories that require authentication.
+
+The archive URL for a version is always constructed from the commit hash of
+that version. This means that tags are first resolved to specific commits.
+This is done so that the archive remains identical even if tags are rewritten.
 
 =end pod
