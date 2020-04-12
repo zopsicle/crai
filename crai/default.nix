@@ -6,10 +6,10 @@ in
     raku.rakuPackage {
         name = "crai";
         src = ./.;
+        buildInputs = [ sassc ];
         depends = map get-depend meta6.depends;
         preInstallPhase = ''
             export LD_LIBRARY_PATH=${lib.makeLibraryPath [ curl libressl sqlite ]}
-            ${sassc}/bin/sassc --precision 10 static/style.scss static/style.css
         '';
         postInstallPhase = ''
             makeWrapper ${perl}/bin/prove $out/bin/crai.prove       \
