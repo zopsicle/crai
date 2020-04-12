@@ -4,6 +4,7 @@ use Crai::Archive;
 use Crai::Cpan;
 use Crai::Database;
 use Crai::Mirror;
+use Crai::P6c;
 use DBIish;
 use JSON::Fast;
 use LibCurl::Easy;
@@ -12,6 +13,7 @@ my sub MAIN(
     IO() :$database!,
     IO() :$mirror!,
     Bool :$skip-list-cpan-archives,
+    Bool :$skip-list-p6c-archives,
     Bool :$skip-download-archives,
     Bool :$skip-extract-meta,
     --> Nil
@@ -27,6 +29,11 @@ my sub MAIN(
     unless $skip-list-cpan-archives {
         # TODO: Insert encounters.
         $db.insert-archive($_) for list-cpan-archives;
+    }
+
+    unless $skip-list-p6c-archives {
+        # TODO: Insert encounters.
+        $db.insert-archive($_) for list-p6c-archives($curl);
     }
 
     unless $skip-download-archives {

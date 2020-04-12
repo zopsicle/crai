@@ -17,6 +17,7 @@ my sub download-archive(LibCurl::Easy:D $curl, $mirror, $archive-url)
     my $archive-path := archive-path($mirror, $archive-url);
     return { :present } if $archive-path.s;
     try {
+        $curl.reset;
         $curl.setopt(
             URL      => $archive-url,
             download => ~$archive-path,
