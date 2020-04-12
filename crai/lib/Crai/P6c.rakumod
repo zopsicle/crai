@@ -67,7 +67,9 @@ Crai::P6c - Crawl p6c for archives
 =head1 SYNOPSIS
 
     use Crai::P6c;
-    .say for list-p6c-archives;
+    use LibCurl::Easy;
+    my $curl := LibCurl::Easy.new(timeout => 60);
+    .say for list-p6c-archives($curl);
 
 =head1 DESCRIPTION
 
