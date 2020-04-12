@@ -28,12 +28,18 @@ my sub MAIN(
 
     unless $skip-list-cpan-archives {
         # TODO: Insert encounters.
-        $db.insert-archive($_) for list-cpan-archives;
+        for list-cpan-archives() {
+            put($_);
+            $db.insert-archive($_);
+        }
     }
 
     unless $skip-list-p6c-archives {
         # TODO: Insert encounters.
-        $db.insert-archive($_) for list-p6c-archives($curl);
+        for list-p6c-archives($curl) {
+            put($_);
+            $db.insert-archive($_);
+        }
     }
 
     unless $skip-download-archives {

@@ -55,7 +55,7 @@ my sub list-github-archives(Str() $owner, Str() $repo)
         ==> map  ({ .split(/\s+/) })
         ==> grep ({ !$++ || .[1] ne 'HEAD' })
         ==> grep ({ .[1] !~~ /'^{}'/ })  # Skip hashes of annotated tags.
-        ==> map  ({ "$url/archive/{.[0]}.tar.gz" })
+        ==> map  ({ "$url/archive/{.[0]}.tar.gz#{.[1]}" })
 }
 
 =begin pod
@@ -98,5 +98,6 @@ Does not support Git repositories that require authentication.
 The archive URL for a version is always constructed from the commit hash of
 that version. This means that tags are first resolved to specific commits.
 This is done so that the archive remains identical even if tags are rewritten.
+Archive URLs do contain the tag name in the fragment, for convenience.
 
 =end pod
