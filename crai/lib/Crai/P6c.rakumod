@@ -40,14 +40,14 @@ my sub list-github-archives(Str() $owner, Str() $repo)
 
     my $url := "https://github.com/$owner/$repo";
     my $git := run(
-        'git', 'ls-remote', "$url.git",
+        'git', 'ls-remote',
 
         # Put HEAD last, so we can skip
         # it if it’s not the only one.
         '--sort', '-refname',
 
         # Get refs matching these patterns.
-        'HEAD', 'refs/tags/*',
+        "$url.git", 'HEAD', 'refs/tags/*',
 
         :out,
     );
