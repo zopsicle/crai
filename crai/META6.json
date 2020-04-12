@@ -19,6 +19,7 @@
         "JSON::Fast",
         "LibCurl",
         "OpenSSL",
-        "Template-Classic"
+        "Template-Classic",
+        "URI"
     ]
 }

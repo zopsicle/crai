@@ -6,6 +6,7 @@ use Crai::Web::Error;
 use Crai::Web::Home;
 use Crai::Web::Layout;
 use DBIish;
+use URI::Escape;
 
 my sub MAIN(IO() :$database! --> Nil)
     is export
@@ -15,7 +16,7 @@ my sub MAIN(IO() :$database! --> Nil)
 
     given %*ENV<REQUEST_URI> {
         when /^ '/' $/ { serve-home($db) }
-        when /^ '/archive/' (.+) $/ { serve-archive($db, $0) }
+        when /^ '/archive/' (.+) $/ { serve-archive($db, uri-unescape($0)) }
         default { respond-error(404) }
     }
 }
