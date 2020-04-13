@@ -18,7 +18,7 @@ my &template-search := template :(:@archives), q:to/HTML/;
             </p>
             <p class="-labels">
                 <span><%= %archive<meta-license> or ｢N/A｣ %></span>
-                <% for %archive<meta-tags>.split(',').grep(?*) { %>
+                <% for %archive<meta-tags>[] { %>
                     <span><%= $_ %></span>
                 <% } %>
             </p>

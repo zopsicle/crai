@@ -229,7 +229,8 @@ method search-archives(
         SQL
     $sth.execute(@terms);
     $sth.allrows
-        ==> map ({ my % = $sth.column-names.map({S:g/_/-/}) Z=> @^a });
+        ==> map ({ my % = $sth.column-names.map({S:g/_/-/}) Z=> @^a })
+        ==> map ({ %^a<meta-tags> .= split(',') .= grep(?*) .= cache; %^a });
 }
 
 method fetch-archive(
@@ -299,7 +300,7 @@ method fetch-archive(
             WHERE  archive_url = ?1
             SQL
         $sth.execute(%archive<url>);
-        $sth.allrows.classify(*[0], as => *[1]);
+        my % = $sth.allrows.classify(*[0], as => *[1]);
     };
 
     %archive<meta-emulates> = do {

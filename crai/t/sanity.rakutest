@@ -1,0 +1,64 @@
+use fatal;
+
+use Crai::Archive;
+use Crai::Database;
+use DBIish;
+use JSON::Fast;
+use Test;
+
+plan(23);
+
+my $testdata := $?FILE.IO.dirname.IO.add('testdata');
+my %archives := {
+    'Template-Classic.tar.gz' => $testdata.add('Template-Classic-0.0.2.tar.gz'),
+    'Cro-HTTP.tar.gz'         => $testdata.add('cro-http-0.8.3.tar.gz'),
+};
+
+my $dbh := DBIish.connect('SQLite', database => ':memory:');
+my $db  := Crai::Database.new(:$dbh);
+
+for %archives.kv -> $url, $path {
+    my $meta := read-meta($path);
+    my %meta := from-json($meta);
+    my %norm := normalize-meta(%meta);
+    $db.insert-archive($url);
+    $db.update-archive-meta($url, |%norm);
+}
+
+cmp-ok($db.fetch-archive-urls.Set, 'eqv', %archives.keys.Set);
+cmp-ok($db.fetch-archive-count,    '==',  2);
+
+given $db.search-archives('Template') {
+    cmp-ok($_, '==', 1);
+    cmp-ok(.[0]<url>,       'eq',  'Template-Classic.tar.gz');
+    cmp-ok(.[0]<meta-name>, 'eq',  'Template::Classic');
+    cmp-ok(.[0]<meta-tags>, 'eqv', <template web>);
+}
+
+given $db.fetch-archive('Acme::Cow') {
+    cmp-ok($_, '==', 0);
+}
+
+given $db.fetch-archive('Template-Classic.tar.gz') {
+    cmp-ok(.<url>,            'eq',  'Template-Classic.tar.gz');
+    cmp-ok(.<meta-name>,      'eq',  'Template::Classic');
+    cmp-ok(.<meta-authors>,   'eqv', ('Chloé Kekoa',));
+    cmp-ok(.<meta-provides>,  'eqv', { 'Template::Classic' => 'lib/Template/Classic.pm6' });
+    cmp-ok(.<meta-depends>,   'eqv', {});
+    cmp-ok(.<meta-emulates>,  'eqv', {});
+    cmp-ok(.<meta-resources>, 'eqv', ());
+    cmp-ok(.<meta-tags>,      'eqv', <template web>);
+}
+
+given $db.fetch-archive('Cro-HTTP.tar.gz') {
+    my %provides := EVALFILE $testdata.add('cro-http-0.8.3-provides.raku');
+    my %depends  := EVALFILE $testdata.add('cro-http-0.8.3-depends.raku');
+    cmp-ok(.<url>,            'eq',  'Cro-HTTP.tar.gz');
+    cmp-ok(.<meta-name>,      'eq',  'Cro::HTTP');
+    cmp-ok(.<meta-authors>,   'eqv', ('Jonathan Worthington <jnthn@jnthn.net>',));
+    cmp-ok(.<meta-provides>,  'eqv', %provides);
+    cmp-ok(.<meta-depends>,   'eqv', %depends);
+    cmp-ok(.<meta-emulates>,  'eqv', {});
+    cmp-ok(.<meta-resources>, 'eqv', <folder/test.txt index.html>);
+    cmp-ok(.<meta-tags>,      'eqv', <Client HTTP Server>);
+}
