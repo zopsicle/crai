@@ -56,11 +56,12 @@ my sub respond-archive(%archive)
 {
     my $title    := "%archive<meta-name> %archive<meta-version>";
     my $subtitle := %archive<meta-description>;
+    my $query    := %archive<meta-name> // '';
     my $nix      := "raku.\"{%archive<meta-name>}\"";
     my $zef      := "zef install \"%archive<meta-name>\"";
     sub content { render-archive(:%archive, :$nix, :$zef) }
 
     print("Content-Type: text/html\r\n");
     print("\r\n");
-    print($_) for render-layout(:$title, :$subtitle, :&content);
+    print($_) for render-layout(:$title, :$subtitle, :$query, :&content);
 }

@@ -12,7 +12,8 @@
         "Crai::Web::Archive": "lib/Crai/Web/Archive.rakumod",
         "Crai::Web::Error": "lib/Crai/Web/Error.rakumod",
         "Crai::Web::Home": "lib/Crai/Web/Home.rakumod",
-        "Crai::Web::Layout": "lib/Crai/Web/Layout.rakumod"
+        "Crai::Web::Layout": "lib/Crai/Web/Layout.rakumod",
+        "Crai::Web::Search": "lib/Crai/Web/Search.rakumod"
     },
     "depends": [
         "DBIish",

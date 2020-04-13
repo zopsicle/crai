@@ -5,6 +5,7 @@ use Crai::Web::Archive;
 use Crai::Web::Error;
 use Crai::Web::Home;
 use Crai::Web::Layout;
+use Crai::Web::Search;
 use DBIish;
 use URI::Escape;
 
@@ -17,6 +18,7 @@ my sub MAIN(IO() :$database! --> Nil)
     given %*ENV<REQUEST_URI> {
         when /^ '/' $/ { serve-home($db) }
         when /^ '/archive/' (.+) $/ { serve-archive($db, uri-unescape($0)) }
+        when /^ '/search?q=' (.*) $/ { serve-search($db, uri-unescape($0)) }
         default { respond-error(404) }
     }
 }
@@ -32,4 +34,10 @@ my sub serve-archive(Crai::Database:D $db, Str() $archive-url --> Nil)
     my %archive := $db.fetch-archive($archive-url);
     unless %archive { respond-error(404); return }
     respond-archive(%archive);
+}
+
+my sub serve-search(Crai::Database:D $db, Str() $query --> Nil)
+{
+    my @archives = $db.search-archives($query);
+    respond-search($query, @archives);
 }

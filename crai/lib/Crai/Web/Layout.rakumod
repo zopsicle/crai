@@ -2,15 +2,19 @@ unit module Crai::Web::Layout;
 
 use Template::Classic;
 
-my &template-layout := template :(:$title!, :$subtitle, :&content!), q:to/HTML/;
+my &template-layout := template :(:$title!, :$subtitle, :$query = '', :&content!), q:to/HTML/;
     <!DOCTYPE html>
     <meta charset="utf-8">
     <link rel="stylesheet" href="/static/style.css">
     <title><%= $title %> at CRAI</title>
-    <body class="crai--dark">
+    <body class="crai--light">
     <nav>
         <div>
             <a href="/">CRAI</a>
+            <form action="/search">
+                <input type="search" name="q" value="<%= $query %>">
+                <button>Search</button>
+            </form>
         </div>
     </nav>
     <header>

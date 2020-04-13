@@ -5,6 +5,10 @@
     --primary:   #2E6EA6; --primary-contra:  #FFFFFF;
     --secondary: #F2D3AC;
     --tertiary:  #F2D3AC; --tertiary-contra: #222222;
+    --link:      blue;
+    --visited:   purple;
+    --label-primary:   #EEEEEE;
+    --label-secondary: #888888;
 }
 
 .crai--dark
@@ -12,9 +16,13 @@
     background-color: #222222;
     background-image: url("/static/darkbg.png");
     color: #DDDDDD;
-    --primary:   #2E6EA6; --primary-contra:  #DDDDDD;
-    --secondary: #0C4C84;
-    --tertiary:  #0C4C84; --tertiary-contra: #DDDDDD;
+    --primary:         #2E6EA6; --primary-contra:  #DDDDDD;
+    --secondary:       #0C4C84;
+    --tertiary:        #0C4C84; --tertiary-contra: #DDDDDD;
+    --link:            #AACCFF;
+    --visited:         #AAAAAA;
+    --label-primary:   #333333;
+    --label-secondary: #777777;
 }
 
 body
@@ -70,7 +78,8 @@ body
 
         a
         {
-            color: inherit;
+            color: var(--link);
+            &:visited { color: var(--visited); }
         }
 
         em
@@ -81,13 +90,6 @@ body
         strong
         {
             font-weight: bold;
-        }
-
-        sup,
-        .crai--footnotes > li
-        {
-            font-size: 0.8rem;
-            vertical-align: super;
         }
 
         ul
@@ -109,6 +111,26 @@ body
                 font-weight: bold;
                 text-align: left;
                 width: 6rem;
+            }
+        }
+
+        .crai--search-result
+        {
+            & > .-title
+            {
+                font-family: inherit;
+                font-size: inherit;
+                font-weight: bold;
+            }
+
+            & > .-labels > span
+            {
+                background: var(--label-primary);
+                border: solid 1px;
+                border-radius: 10px;
+                color: var(--label-secondary);
+                font-size: 0.8rem;
+                padding: 1px 4px;
             }
         }
     }

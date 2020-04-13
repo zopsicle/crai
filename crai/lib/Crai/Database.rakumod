@@ -190,6 +190,48 @@ method fetch-archive-count(
     $sth.row[0];
 }
 
+method search-archives(
+    ::?CLASS:D:
+    Str() $query,
+)
+{
+    my @terms = $query.comb(/\S+/);
+    return () unless @terms;
+
+    my $sth := self!sth(qq:to/SQL/);
+        WITH latests AS (
+            SELECT   max(norm_version) AS norm_version
+            FROM     archives
+            GROUP BY meta_name
+        )
+
+        SELECT
+            archives.url,
+            archives.meta_name,
+            archives.meta_version,
+            archives.meta_description,
+            archives.meta_license,
+            (
+                SELECT coalesce(group_concat(meta_tags.tag), '')
+                FROM   meta_tags
+                WHERE  meta_tags.archive_url = archives.url
+            ) AS meta_tags
+
+        FROM
+            archives
+
+        WHERE
+            archives.norm_version IN ( SELECT norm_version FROM latests ) AND
+            {@terms.map({ "meta_name LIKE '%' || ?{++$} || '%'" }).join(' AND ')}
+
+        GROUP BY
+            meta_name
+        SQL
+    $sth.execute(@terms);
+    $sth.allrows
+        ==> map ({ my % = $sth.column-names.map({S:g/_/-/}) Z=> @^a });
+}
+
 method fetch-archive(
     ::?CLASS:D:
     Str() $url,
