@@ -20,6 +20,8 @@ my sub MAIN(
 )
     is export
 {
+    $*OUT.out-buffer = 0;
+
     my $curl := LibCurl::Easy.new(timeout => 60);
     my $dbh  := DBIish.connect('SQLite', :$database);
     my $db   := Crai::Database.new(:$dbh);

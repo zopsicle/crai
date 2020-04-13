@@ -36,7 +36,7 @@ my sub list-github-archives(Str() $owner, Str() $repo)
 {
     # If a repository is private, Git will ask for a password.
     # By setting these environment variables, it fails instead.
-    my %*ENV := %(|%*ENV, GIT_ASKPASS => 'false', GIT_TERMINAL_PROMPT => '0');
+    my %env := %(|%*ENV, GIT_ASKPASS => 'false', GIT_TERMINAL_PROMPT => '0');
 
     my $url := "https://github.com/$owner/$repo";
     my $git := run(
@@ -49,13 +49,14 @@ my sub list-github-archives(Str() $owner, Str() $repo)
         # Get refs matching these patterns.
         "$url.git", 'HEAD', 'refs/tags/*',
 
+        :%env,
         :out,
     );
     $git.out.lines
-        ==> map  ({ .split(/\s+/) })
-        ==> grep ({ !$++ || .[1] ne 'HEAD' })
-        ==> grep ({ .[1] !~~ /'^{}'/ })  # Skip hashes of annotated tags.
-        ==> map  ({ "$url/archive/{.[0]}.tar.gz#{.[1]}" })
+       ==> map  ({ .split(/\s+/) })
+       ==> grep ({ !$++ || .[1] ne 'HEAD' })
+       ==> grep ({ .[1] !~~ /'^{}'/ })  # Skip hashes of annotated tags.
+       ==> map  ({ "$url/archive/{.[0]}.tar.gz#{.[1]}" })
 }
 
 =begin pod

@@ -47,6 +47,7 @@ let
 
                 # etc/crai-cron.service
                 raku template.raku                                              \
+                    crai-cron=$crai/bin/crai-cron                               \
                     database=$database                                          \
                     mirror=$mirror                                              \
                     < crai-cron.service                                         \

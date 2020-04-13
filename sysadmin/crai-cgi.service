@@ -5,10 +5,10 @@ StartLimitBurst=5
 StartLimitIntervalSec=20
 
 [Service]
+AmbientCapabilities=CAP_NET_BIND_SERVICE
 ExecStart=@lighttpd@ -D -f @lighttpd.conf@
 Restart=always
 User=crai
 
 [Install]
-AmbientCapabilities=CAP_NET_BIND_SERVICE
 WantedBy=multi-user.target

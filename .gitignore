@@ -1,1 +1,3 @@
+/.terraform
 /result
+/terraform.tfstate.backup
