@@ -12,13 +12,13 @@ in
             export LD_LIBRARY_PATH=${lib.makeLibraryPath [ curl libressl sqlite ]}
         '';
         postInstallPhase = ''
-            makeWrapper ${perl}/bin/prove $out/bin/crai.prove       \
+            makeWrapper ${perl}/bin/prove $out/bin/crai-prove       \
                 --set PERL6LIB "$(< $out/PERL6LIB)"                 \
                 --set LD_LIBRARY_PATH $LD_LIBRARY_PATH              \
                 --add-flags --exec                                  \
                 --add-flags ${rakudo}/bin/raku
 
-            for p in $out/bin/crai.{cgi,cron}{,.profile}; do
+            for p in $out/bin/crai-{cgi,cron}{,.profile}; do
                 wrapProgram $p                                      \
                     --set LD_LIBRARY_PATH $LD_LIBRARY_PATH
             done

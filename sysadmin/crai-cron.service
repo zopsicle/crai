@@ -1,0 +1,8 @@
+[Unit]
+Description=crai-cron
+After=network.target
+
+[Service]
+ExecStart=@crai-cron@ --database=@database@ --mirror=@mirror@
+Type=oneshot
+User=crai
