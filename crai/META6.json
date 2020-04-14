@@ -4,9 +4,9 @@
     "provides": {
         "Crai::Archive": "lib/Crai/Archive.rakumod",
         "Crai::Database": "lib/Crai/Database.rakumod",
-        "Crai::Cgi": "lib/Crai/Cgi.rakumod",
         "Crai::Cpan": "lib/Crai/Cpan.rakumod",
         "Crai::Cron": "lib/Crai/Cron.rakumod",
+        "Crai::Fastcgi": "lib/Crai/Fastcgi.rakumod",
         "Crai::Mirror": "lib/Crai/Mirror.rakumod",
         "Crai::P6c": "lib/Crai/P6c.rakumod",
         "Crai::Web::Archive": "lib/Crai/Web/Archive.rakumod",
@@ -17,6 +17,7 @@
     },
     "depends": [
         "DBIish",
+        "FastCGI::NativeCall",
         "JSON::Fast",
         "LibCurl",
         "OpenSSL",

@@ -1,1 +1,2 @@
-crai-cgi: @lighttpd@ -D -f @lighttpd.conf@
+caddy: @caddy@ -conf @Caddyfile@
+crai-fastcgi: @crai-fastcgi@ --database=@database@ --fastcgi-socket=@fastcgi-socket@

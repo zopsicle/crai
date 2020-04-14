@@ -61,7 +61,9 @@ my sub respond-archive(%archive)
     my $zef      := "zef install \"%archive<meta-name>\"";
     sub content { render-archive(:%archive, :$nix, :$zef) }
 
-    print("Content-Type: text/html\r\n");
-    print("\r\n");
-    print($_) for render-layout(:$title, :$subtitle, :$query, :&content);
+    return (
+        200,
+        { Content-Type => 'text/html' },
+        render-layout(:$title, :$subtitle, :$query, :&content),
+    );
 }

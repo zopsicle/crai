@@ -1,0 +1,7 @@
+http://@http-host@/static {
+    root @static@
+}
+
+http://@http-host@ {
+    fastcgi / @fastcgi-socket@
+}

@@ -24,14 +24,16 @@ my sub render-home(|c)
     template-home(|c);
 }
 
-my sub respond-home(Int() $statistic --> Nil)
+my sub respond-home(Int() $statistic)
     is export
 {
     my $title    := ｢Cryogenic Raku Archive Index｣;
     my $subtitle := qq｢Hosting metadata about $statistic archives!｣;
     sub content { render-home }
 
-    print("Content-Type: text/html\r\n");
-    print("\r\n");
-    print($_) for render-layout(:$title, :$subtitle, :&content);
+    return (
+        200,
+        { Content-Type => 'text/html' },
+        render-layout(:$title, :$subtitle, :&content),
+    );
 }

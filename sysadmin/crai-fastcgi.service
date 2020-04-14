@@ -1,12 +1,11 @@
 [Unit]
-Description=crai-cgi
+Description=crai-fastcgi
 After=network.target
 StartLimitBurst=5
 StartLimitIntervalSec=20
 
 [Service]
-AmbientCapabilities=CAP_NET_BIND_SERVICE
-ExecStart=@lighttpd@ -D -f @lighttpd.conf@
+ExecStart=@crai-fastcgi@ --database=@database@ --fastcgi-socket=@fastcgi-socket@
 Restart=always
 User=crai
 

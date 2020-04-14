@@ -13,7 +13,7 @@ my sub render-error(|c)
     template-error(|c);
 }
 
-my sub respond-error(Int() $status --> Nil)
+my sub respond-error(Int() $status)
     is export
 {
     constant %errors := {
@@ -24,8 +24,9 @@ my sub respond-error(Int() $status --> Nil)
     my ($title, $description) := %errors{$status} // %errors{0};
     sub content { render-error(:$description) }
 
-    print("Status: $status\r\n");
-    print("Content-Type: text/html\r\n");
-    print("\r\n");
-    print($_) for render-layout(:$title, :&content);
+    return (
+        $status,
+        { Content-Type => 'text/html' },
+        render-layout(:$title, :&content),
+    );
 }

@@ -23,7 +23,7 @@ in
                 --add-flags --exec                                  \
                 --add-flags ${rakudo}/bin/raku
 
-            for p in $out/bin/crai-{cgi,cron}{,.profile}; do
+            for p in $out/bin/crai-{fastcgi,cron}{,.profile}; do
                 wrapProgram $p                                      \
                     --prefix PATH            : "$extraPATH"         \
                     --prefix LD_LIBRARY_PATH : "$extraLD_LIBRARY_PATH"

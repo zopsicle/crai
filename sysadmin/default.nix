@@ -1,46 +1,40 @@
-{ crai, hivemind, lighttpd, makeWrapper, rakudo, stdenvNoCC }:
+{ caddy, crai, hivemind, makeWrapper, rakudo, stdenvNoCC }:
 let
     common =
-        { database, mirror, server_port }:
+        { database, mirror, fastcgi_socket, http_host }:
         stdenvNoCC.mkDerivation {
             name = "crai-sysadmin";
 
             src = ./.;
             buildInputs = [ makeWrapper rakudo ];
-            inherit crai hivemind lighttpd;
+            inherit caddy crai hivemind;
 
-            inherit database mirror server_port;
+            inherit database mirror fastcgi_socket http_host;
 
             phases = [ "unpackPhase" "installPhase" ];
             installPhase = ''
-                mkdir --parents $out/bin $out/etc $out/www/cgi-bin
+                mkdir --parents $out/bin $out/etc
 
-                # www/static
-                ln --symbolic $crai/static $out/www/static
-
-                # etc/Procfile
+                # bin/crai.development
                 makeWrapper $hivemind/bin/hivemind $out/bin/crai.development    \
                     --add-flags --root                                          \
                     --add-flags .                                               \
                     --add-flags $out/etc/Procfile
 
-                # bin/crai-cgi
-                makeWrapper $crai/bin/crai-cgi $out/www/cgi-bin/crai-cgi        \
-                    --add-flags --database=$database
-
-                # etc/lighttpd.conf
+                # etc/Caddyfile
                 raku template.raku                                              \
-                    server-document-root=$out/www                               \
-                    server-port=$server_port                                    \
-                    < lighttpd.conf                                             \
-                    > $out/etc/lighttpd.conf
+                    fastcgi-socket=$fastcgi_socket                              \
+                    static=$crai/static                                         \
+                    http-host=$http_host                                        \
+                    < Caddyfile                                                 \
+                    > $out/etc/Caddyfile
 
-                # etc/crai-cgi.service
+                # etc/caddy.service
                 raku template.raku                                              \
-                    lighttpd=$lighttpd/bin/lighttpd                             \
-                    lighttpd.conf=$out/etc/lighttpd.conf                        \
-                    < crai-cgi.service                                          \
-                    > $out/etc/crai-cgi.service
+                    Caddyfile=$out/etc/Caddyfile                                \
+                    caddy=$caddy/bin/caddy                                      \
+                    < caddy.service                                             \
+                    > $out/etc/caddy.service
 
                 # etc/crai-cron.timer
                 cp crai-cron.timer $out/etc/crai-cron.timer
@@ -53,10 +47,21 @@ let
                     < crai-cron.service                                         \
                     > $out/etc/crai-cron.service
 
+                # etc/crai-fastcgi.service
+                raku template.raku                                              \
+                    crai-fastcgi=$crai/bin/crai-fastcgi                         \
+                    database=$database                                          \
+                    fastcgi-socket=$fastcgi_socket                              \
+                    < crai-fastcgi.service                                      \
+                    > $out/etc/crai-fastcgi.service
+
                 # etc/Procfile
                 raku template.raku                                              \
-                    lighttpd=$lighttpd/bin/lighttpd                             \
-                    lighttpd.conf=$out/etc/lighttpd.conf                        \
+                    Caddyfile=$out/etc/Caddyfile                                \
+                    caddy=$caddy/bin/caddy                                      \
+                    crai-fastcgi=$crai/bin/crai-fastcgi                         \
+                    database=$database                                          \
+                    fastcgi-socket=$fastcgi_socket                              \
                     < Procfile                                                  \
                     > $out/etc/Procfile
             '';
@@ -64,13 +69,15 @@ let
 in
     {
         development = common {
-            database    = "/tmp/crai.sqlite3";
-            mirror      = "/tmp/crai.mirror";
-            server_port = 8080;
+            database       = "/tmp/crai.sqlite3";
+            mirror         = "/tmp/crai.mirror";
+            fastcgi_socket = "/tmp/crai.fastcgi";
+            http_host      = "127.0.0.1:8080";
         };
         production = common {
-            database    = "/var/lib/crai/crai.sqlite3";
-            mirror      = "/var/lib/crai/crai.mirror";
-            server_port = 80;
+            database       = "/var/lib/crai/crai.sqlite3";
+            mirror         = "/var/lib/crai/crai.mirror";
+            fastcgi_socket = "/var/run/crai/crai.fastcgi";
+            http_host      = "0.0.0.0:80";
         };
     }

@@ -32,13 +32,15 @@ my sub render-search(|c)
     template-search(|c);
 }
 
-my sub respond-search($query, @archives --> Nil)
+my sub respond-search($query, @archives)
     is export
 {
     my $title := "“$query”";
     sub content { render-search(:@archives) }
 
-    print("Content-Type: text/html\r\n");
-    print("\r\n");
-    print($_) for render-layout(:$title, :$query, :&content);
+    return (
+        200,
+        { Content-Type => 'text/html' },
+        render-layout(:$title, :$query, :&content),
+    );
 }

@@ -13,18 +13,20 @@ my sub MAIN(IO() :$production!, IO() :$terraform! --> Nil)
 
     my $ssh := run(<ssh -T>, "root@$host", 'bash', :in);
     {
-        $ssh.in.put: "if ! id crai; then useradd crai; fi";
-        $ssh.in.put: "mkdir --parents /home/crai";
-        $ssh.in.put: "chown crai:crai /home/crai";
+        $ssh.in.put: "if ! id crai; then useradd --create-home crai; fi";
 
         $ssh.in.put: "mkdir --parents /var/lib/crai/crai.mirror";
         $ssh.in.put: "chown crai:crai /var/lib/crai";
         $ssh.in.put: "chown crai:crai /var/lib/crai/crai.mirror";
 
+        $ssh.in.put: "mkdir --parents /var/run/crai";
+        $ssh.in.put: "chown crai:crai /var/run/crai";
+
         my %units := {
-            'crai-cgi.service'  => { :enable, :restart },
-            'crai-cron.timer'   => { :enable, :restart },
-            'crai-cron.service' => {},
+            'caddy.service'         => { :enable, :restart },
+            'crai-fastcgi.service'  => { :enable, :restart },
+            'crai-cron.timer'       => { :enable, :restart },
+            'crai-cron.service'     => {},
         };
         for %units.keys {
             $ssh.in.put: "ln --force --symbolic " ~
