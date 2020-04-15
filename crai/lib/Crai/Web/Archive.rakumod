@@ -16,10 +16,19 @@ my &template-archive := template :(:%archive!, :$nix, :$zef), q:to/HTML/;
 
     <h2 id="metadata">Metadata</h2>
     <table class="crai--properties">
-        <tr><th>Perl    <td><%= %archive<meta-perl>               or ｢N/A｣ %>
-        <tr><th>License <td><%= %archive<meta-license>            or ｢N/A｣ %>
-        <tr><th>Authors <td><%= %archive<meta-authors>.join(', ') or ｢N/A｣ %>
-        <tr><th>Tags    <td><%= %archive<meta-tags>.join(', ')    or ｢N/A｣ %>
+        <tr><th>Perl         <td><%= %archive<meta-perl>                or ｢N/A｣ %>
+        <tr><th>License      <td><%= %archive<meta-license>             or ｢N/A｣ %>
+        <tr><th>Authors      <td><%= %archive<meta-authors>.join(', ')  or ｢N/A｣ %>
+        <tr><th>Tags         <td><%= %archive<meta-tags>.join(', ')     or ｢N/A｣ %>
+        <tr><th>Email        <td><%= %archive<meta-support-email>       or ｢N/A｣ %>
+        <tr><th>Mailing list <td><%= %archive<meta-support-mailinglist> or ｢N/A｣ %>
+        <tr><th>Bug tracker  <td><%= %archive<meta-support-bugtracker>  or ｢N/A｣ %>
+        <tr><th>Source       <td><%= %archive<meta-support-source>      or ｢N/A｣ %>
+        <tr><th>IRC          <td><%= %archive<meta-support-irc>         or ｢N/A｣ %>
+        <%
+            # Concerning meta-support-phone, that one is a privacy legislation
+            # nightmare that I do not want to get into. We’ll skip it.
+        %>
     </table>
 
     <h2 id="readme">Readme</h2>
