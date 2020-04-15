@@ -200,7 +200,8 @@ method search-archives(
 
     my $sth := self!sth(qq:to/SQL/);
         WITH latests AS (
-            SELECT   max(norm_version) AS norm_version
+            SELECT   meta_name,
+                     max(norm_version) AS norm_version
             FROM     archives
             GROUP BY meta_name
         )
@@ -221,7 +222,11 @@ method search-archives(
             archives
 
         WHERE
-            archives.norm_version IN ( SELECT norm_version FROM latests ) AND
+            archives.norm_version IN (
+                SELECT latests.norm_version
+                FROM   latests
+                WHERE  latests.meta_name = archives.meta_name
+            ) AND
             {@terms.map({ "meta_name LIKE '%' || ?{++$} || '%'" }).join(' AND ')}
 
         GROUP BY
