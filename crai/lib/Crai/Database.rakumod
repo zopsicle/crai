@@ -29,140 +29,165 @@ method !sth(::?CLASS:D: Str() $sql)
     %!sth{$sql} //= $!dbh.prepare($sql);
 }
 
+method !version
+{
+    my $sth := self!sth('PRAGMA user_version');
+    $sth.execute;
+    $sth.row[0] // 0;
+}
+
+method !upgrade(Int() $new-version --> Nil)
+{
+    $!dbh.do("PRAGMA user_version = {$new-version}");
+}
+
 method !setup(::?CLASS:D: --> Nil)
 {
-    $!dbh.do(q:to/SQL/);
-        -- An archive is a tarball retrieved from CPAN or GitHub.
-        -- An archive contains exactly one distribution.
-        -- This table stores metadata about the archive and distribution.
-        -- Some metadata is stored in other tables, due to plurality.
-        CREATE TABLE IF NOT EXISTS archives (
-            -- Unique URL and hashes of the archive.
-            url                         TEXT    NOT NULL,
+    if self!version == 0 {
+        $!dbh.do(q:to/SQL/);
+            -- An archive is a tarball retrieved from CPAN or GitHub.
+            -- An archive contains exactly one distribution.
+            -- This table stores metadata about the archive and distribution.
+            -- Some metadata is stored in other tables, due to plurality.
+            CREATE TABLE archives (
+                -- Unique URL and hashes of the archive.
+                url                         TEXT    NOT NULL,
 
-            -- Hashes of the archive.
-            hash_md5                    TEXT,
-            hash_sha1                   TEXT,
-            hash_sha256                 TEXT,
+                -- Hashes of the archive.
+                hash_md5                    TEXT,
+                hash_sha1                   TEXT,
+                hash_sha256                 TEXT,
 
-            -- Raw fields from META6.json.
-            meta_perl                   TEXT,
-            meta_name                   TEXT,
-            meta_version                TEXT,
-            meta_description            TEXT,
-            meta_support_email          TEXT,
-            meta_support_mailinglist    TEXT,
-            meta_support_bugtracker     TEXT,
-            meta_support_source         TEXT,
-            meta_support_irc            TEXT,
-            meta_support_phone          TEXT,
-            meta_production             INTEGER,
-            meta_license                TEXT,
+                -- Raw fields from META6.json.
+                meta_perl                   TEXT,
+                meta_name                   TEXT,
+                meta_version                TEXT,
+                meta_description            TEXT,
+                meta_support_email          TEXT,
+                meta_support_mailinglist    TEXT,
+                meta_support_bugtracker     TEXT,
+                meta_support_source         TEXT,
+                meta_support_irc            TEXT,
+                meta_support_phone          TEXT,
+                meta_production             INTEGER,
+                meta_license                TEXT,
 
-            -- Processed meta_version, so that it can be sorted.
-            --
-            -- The version number is padded to six dot-separated segments.
-            -- Each segment is left-padded with zeroes until it is eight long.
-            -- For instance, 1.2.3 becomes 00000001.00000002.00000003.
-            --                             00000000.00000000.00000000.
-            -- Non-numeric parts, such as '-alpha', are treated as 0.
-            --
-            -- If multiple archives have the same version, sort them according
-            -- to encounters.run_when.
-            norm_version                TEXT,
+                -- Processed meta_version, so that it can be sorted.
+                --
+                -- The version number is padded to six dot-separated segments.
+                -- Each segment is left-padded with zeroes until it is eight long.
+                -- For instance, 1.2.3 becomes 00000001.00000002.00000003.
+                --                             00000000.00000000.00000000.
+                -- Non-numeric parts, such as '-alpha', are treated as 0.
+                --
+                -- If multiple archives have the same version, sort them according
+                -- to encounters.run_when.
+                norm_version                TEXT,
 
-            PRIMARY KEY (url)
-        )
-        SQL
+                PRIMARY KEY (url)
+            )
+            SQL
 
-    $!dbh.do(q:to/SQL/);
-        CREATE TABLE IF NOT EXISTS meta_authors (
-            archive_url                 TEXT    NOT NULL,
-            author                      TEXT    NOT NULL,
-            PRIMARY KEY (archive_url, author)
-            FOREIGN KEY (archive_url) REFERENCES archives (url)
-        )
-        SQL
+        $!dbh.do(q:to/SQL/);
+            CREATE TABLE meta_authors (
+                archive_url                 TEXT    NOT NULL,
+                author                      TEXT    NOT NULL,
+                PRIMARY KEY (archive_url, author)
+                FOREIGN KEY (archive_url) REFERENCES archives (url)
+            )
+            SQL
 
-    $!dbh.do(q:to/SQL/);
-        CREATE TABLE IF NOT EXISTS meta_provides (
-            archive_url                 TEXT    NOT NULL,
-            unit                        TEXT    NOT NULL,
-            file                        TEXT    NOT NULL,
-            PRIMARY KEY (archive_url, unit)
-            FOREIGN KEY (archive_url) REFERENCES archives (url)
-        )
-        SQL
+        $!dbh.do(q:to/SQL/);
+            CREATE TABLE meta_provides (
+                archive_url                 TEXT    NOT NULL,
+                unit                        TEXT    NOT NULL,
+                file                        TEXT    NOT NULL,
+                PRIMARY KEY (archive_url, unit)
+                FOREIGN KEY (archive_url) REFERENCES archives (url)
+            )
+            SQL
 
-    $!dbh.do(q:to/SQL/);
-        CREATE TABLE IF NOT EXISTS meta_depends (
-            archive_url                 TEXT    NOT NULL,
-            phase                       TEXT    NOT NULL,
-            use                         TEXT    NOT NULL,
-            PRIMARY KEY (archive_url, phase, use)
-            FOREIGN KEY (archive_url) REFERENCES archives (url)
-        )
-        SQL
+        $!dbh.do(q:to/SQL/);
+            CREATE TABLE meta_depends (
+                archive_url                 TEXT    NOT NULL,
+                phase                       TEXT    NOT NULL,
+                use                         TEXT    NOT NULL,
+                PRIMARY KEY (archive_url, phase, use)
+                FOREIGN KEY (archive_url) REFERENCES archives (url)
+            )
+            SQL
 
-    $!dbh.do(q:to/SQL/);
-        CREATE TABLE IF NOT EXISTS meta_emulates (
-            archive_url                 TEXT    NOT NULL,
-            unit                        TEXT    NOT NULL,
-            use                         TEXT    NOT NULL,
-            PRIMARY KEY (archive_url, unit)
-            FOREIGN KEY (archive_url) REFERENCES archives (url)
-        )
-        SQL
+        $!dbh.do(q:to/SQL/);
+            CREATE TABLE meta_emulates (
+                archive_url                 TEXT    NOT NULL,
+                unit                        TEXT    NOT NULL,
+                use                         TEXT    NOT NULL,
+                PRIMARY KEY (archive_url, unit)
+                FOREIGN KEY (archive_url) REFERENCES archives (url)
+            )
+            SQL
 
-    $!dbh.do(q:to/SQL/);
-        CREATE TABLE IF NOT EXISTS meta_resources (
-            archive_url                 TEXT    NOT NULL,
-            resource                    TEXT    NOT NULL,
-            PRIMARY KEY (archive_url, resource)
-            FOREIGN KEY (archive_url) REFERENCES archives (url)
-        )
-        SQL
+        $!dbh.do(q:to/SQL/);
+            CREATE TABLE meta_resources (
+                archive_url                 TEXT    NOT NULL,
+                resource                    TEXT    NOT NULL,
+                PRIMARY KEY (archive_url, resource)
+                FOREIGN KEY (archive_url) REFERENCES archives (url)
+            )
+            SQL
 
-    $!dbh.do(q:to/SQL/);
-        CREATE TABLE IF NOT EXISTS meta_tags (
-            archive_url                 TEXT    NOT NULL,
-            tag                         TEXT    NOT NULL,
-            PRIMARY KEY (archive_url, tag)
-            FOREIGN KEY (archive_url) REFERENCES archives (url)
-        )
-        SQL
+        $!dbh.do(q:to/SQL/);
+            CREATE TABLE meta_tags (
+                archive_url                 TEXT    NOT NULL,
+                tag                         TEXT    NOT NULL,
+                PRIMARY KEY (archive_url, tag)
+                FOREIGN KEY (archive_url) REFERENCES archives (url)
+            )
+            SQL
 
-    $!dbh.do(q:to/SQL/);
-        -- Warnings about problems with an archive.
-        -- For instance, mistakes in META6.json.
-        CREATE TABLE IF NOT EXISTS warnings (
-            archive_url                 TEXT    NOT NULL,
-            message                     TEXT    NOT NULL,
-            PRIMARY KEY (archive_url, message)
-            FOREIGN KEY (archive_url) REFERENCES archives (url)
-        );
-        SQL
+        $!dbh.do(q:to/SQL/);
+            -- Warnings about problems with an archive.
+            -- For instance, mistakes in META6.json.
+            CREATE TABLE warnings (
+                archive_url                 TEXT    NOT NULL,
+                message                     TEXT    NOT NULL,
+                PRIMARY KEY (archive_url, message)
+                FOREIGN KEY (archive_url) REFERENCES archives (url)
+            );
+            SQL
 
-    $!dbh.do(q:to/SQL/);
-        -- A run is one invocation of the cron job that indexes archives.
-        -- Each run is identified by the time at which it started.
-        -- Runs are useful for tracking the state of the ecosystem over time.
-        CREATE TABLE IF NOT EXISTS runs (
-            [when]                      TEXT    NOT NULL,
-            PRIMARY KEY ([when])
-        )
-        SQL
+        $!dbh.do(q:to/SQL/);
+            -- A run is one invocation of the cron job that indexes archives.
+            -- Each run is identified by the time at which it started.
+            -- Runs are useful for tracking the state of the ecosystem over time.
+            CREATE TABLE runs (
+                [when]                      TEXT    NOT NULL,
+                PRIMARY KEY ([when])
+            )
+            SQL
 
-    $!dbh.do(q:to/SQL/);
-        -- For each run, the set of archives that were found to exist.
-        CREATE TABLE IF NOT EXISTS encounters (
-            run_when                    TEXT    NOT NULL,
-            archive_url                 TEXT    NOT NULL,
-            PRIMARY KEY (run_when, archive_url)
-            FOREIGN KEY (run_when) REFERENCES runs ([when])
-            FOREIGN KEY (archive_url) REFERENCES archives (url)
-        )
-        SQL
+        $!dbh.do(q:to/SQL/);
+            -- For each run, the set of archives that were found to exist.
+            CREATE TABLE encounters (
+                run_when                    TEXT    NOT NULL,
+                archive_url                 TEXT    NOT NULL,
+                PRIMARY KEY (run_when, archive_url)
+                FOREIGN KEY (run_when) REFERENCES runs ([when])
+                FOREIGN KEY (archive_url) REFERENCES archives (url)
+            )
+            SQL
+
+        self!upgrade(1);
+    }
+
+    if self!version == 1 {
+        $!dbh.do(q:to/SQL/);
+            ALTER TABLE runs
+            ADD COLUMN finished TEXT
+            SQL
+
+        self!upgrade(2);
+    }
 }
 
 method fetch-archive-urls(
@@ -399,10 +424,6 @@ method update-archive-meta(
     :@meta-tags,
 )
 {
-    self!sth('BEGIN TRANSACTION');
-    KEEP self!sth('COMMIT TRANSACTION');
-    UNDO self!sth('ROLLBACK TRANSACTION');
-
     my $sth := self!sth(q:to/SQL/);
         UPDATE archives
         SET    meta_perl                = ?2,
@@ -532,6 +553,20 @@ method insert-encounter(
     self!sth(q:to/SQL/).execute(date-str($run-when), $archive-url);
         INSERT INTO encounters (run_when, archive_url)
         VALUES (?1, ?2)
+        SQL
+}
+
+method finish-run(
+    ::?CLASS:D:
+    DateTime() $run-when,
+    DateTime() $when,
+    --> Nil
+)
+{
+    self!sth(q:to/SQL/).execute(date-str($run-when), date-str($when));
+        UPDATE runs
+        SET    finished = ?2
+        WHERE  [when] = ?1
         SQL
 }
 

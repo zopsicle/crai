@@ -22,27 +22,30 @@ my sub MAIN(
 {
     $*OUT.out-buffer = 0;
 
+    my $when := DateTime.now;
     my $curl := LibCurl::Easy.new(timeout => 60);
     my $dbh  := DBIish.connect('SQLite', :$database);
     my $db   := Crai::Database.new(:$dbh);
 
-    # TODO: Insert run.
+    $db.insert-run($when);
 
     unless $skip-list-cpan-archives {
-        # TODO: Insert encounters.
         for list-cpan-archives() {
             put($_);
+            $db.insert-encounter($when, $_);
             $db.insert-archive($_);
         }
     }
 
     unless $skip-list-p6c-archives {
-        # TODO: Insert encounters.
         for list-p6c-archives($curl) {
             put($_);
+            $db.insert-encounter($when, $_);
             $db.insert-archive($_);
         }
     }
+
+    $db.finish-run($when, DateTime.now);
 
     unless $skip-download-archives {
         for ^∞ Z $db.fetch-archive-urls -> ($i, $archive-url) {
