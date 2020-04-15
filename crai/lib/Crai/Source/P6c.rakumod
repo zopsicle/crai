@@ -1,4 +1,4 @@
-unit module Crai::P6c;
+unit module Crai::Source::P6c;
 
 use JSON::Fast;
 use LibCurl::Easy;
@@ -63,11 +63,11 @@ my sub list-github-archives(Str() $owner, Str() $repo)
 
 =head1 NAME
 
-Crai::P6c - Crawl p6c for archives
+Crai::Source::P6c - Crawl p6c for archives
 
 =head1 SYNOPSIS
 
-    use Crai::P6c;
+    use Crai::Source::P6c;
     use LibCurl::Easy;
     my $curl := LibCurl::Easy.new(timeout => 60);
     .say for list-p6c-archives($curl);

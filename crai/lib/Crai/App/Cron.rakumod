@@ -1,10 +1,10 @@
-unit module Crai::Cron;
+unit module Crai::App::Cron;
 
 use Crai::Archive;
-use Crai::Cpan;
 use Crai::Database;
 use Crai::Mirror;
-use Crai::P6c;
+use Crai::Source::Cpan;
+use Crai::Source::P6c;
 use DBIish;
 use JSON::Fast;
 use LibCurl::Easy;

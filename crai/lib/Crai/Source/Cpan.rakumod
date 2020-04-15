@@ -1,4 +1,4 @@
-unit module Crai::Cpan;
+unit module Crai::Source::Cpan;
 
 my constant @whitelist := <.tar .tar.gz .tgz>;
 my constant @blacklist := 'id/P/PS/PSIXDISTS';
@@ -31,11 +31,11 @@ my sub list-cpan-archives(
 
 =head1 NAME
 
-Crai::Cpan - Crawl CPAN for archives
+Crai::Source::Cpan - Crawl CPAN for archives
 
 =head1 SYNOPSIS
 
-    use Crai::Cpan;
+    use Crai::Source::Cpan;
     .say for list-cpan-archives;
 
 =head1 DESCRIPTION

@@ -1,4 +1,4 @@
-unit module Crai::Fastcgi;
+unit module Crai::Web::Psgi;
 
 use Crai::Database;
 use Crai::Web::Archive;
@@ -7,23 +7,10 @@ use Crai::Web::Home;
 use Crai::Web::Layout;
 use Crai::Web::Search;
 use DBIish;
-use FastCGI::NativeCall;
 use URI::Escape;
 
-my sub MAIN(:$fastcgi-socket!, :$database! --> Nil)
+my sub serve-psgi(%env, IO() :$database!)
     is export
-{
-    my $fcgi := FastCGI::NativeCall.new(path => $fastcgi-socket);
-    while $fcgi.accept() {
-        my ($status, $headers, $body) := serve($fcgi.env, $database);
-        $fcgi.Print("Status: $status\r\n");
-        $fcgi.Print("{.key}: {.value}\r\n") for $headers.pairs;
-        $fcgi.Print("\r\n");
-        $fcgi.Print($_) for $body[];
-    }
-}
-
-my sub serve(%env, IO() $database)
 {
     my $dbh := DBIish.connect('SQLite', :$database);
     my $db  := Crai::Database.new(:$dbh);
@@ -54,3 +41,21 @@ my sub serve-search(Crai::Database:D $db, Str() $query)
     my @archives = $db.search-archives($query);
     respond-search($query, @archives);
 }
+
+=begin pod
+
+=head1 NAME
+
+Crai::Web::Psgi - PSGI application
+
+=head1 SYNOPSIS
+
+    use Crai::Web::Psgi;
+    my $database := '/tmp/crai.sqlite3';
+    my &app := { serve-psgi(%^env, $database) };
+
+=head1 DESCRIPTION
+
+Subroutine taking a PSGI environment and returning a PSGI response triplet.
+
+=end pod
