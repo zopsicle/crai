@@ -1,7 +1,7 @@
 { caddy, crai, hivemind, makeWrapper, rakudo, stdenvNoCC }:
 let
     common =
-        { database, mirror, fastcgi_socket, http_host }:
+        { database, mirror, fastcgi_socket, http_url }:
         stdenvNoCC.mkDerivation {
             name = "crai-sysadmin";
 
@@ -9,7 +9,7 @@ let
             buildInputs = [ makeWrapper rakudo ];
             inherit caddy crai hivemind;
 
-            inherit database mirror fastcgi_socket http_host;
+            inherit database mirror fastcgi_socket http_url;
 
             phases = [ "unpackPhase" "installPhase" ];
             installPhase = ''
@@ -25,7 +25,7 @@ let
                 raku template.raku                                              \
                     fastcgi-socket=$fastcgi_socket                              \
                     static=$crai/static                                         \
-                    http-host=$http_host                                        \
+                    http-url=$http_url                                          \
                     < Caddyfile                                                 \
                     > $out/etc/Caddyfile
 
@@ -72,12 +72,12 @@ in
             database       = "/tmp/crai.sqlite3";
             mirror         = "/tmp/crai.mirror";
             fastcgi_socket = "/tmp/crai.fastcgi";
-            http_host      = "127.0.0.1:8080";
+            http_url       = "http://127.0.0.1:8080";
         };
         production = common {
             database       = "/var/lib/crai/crai.sqlite3";
             mirror         = "/var/lib/crai/crai.mirror";
             fastcgi_socket = "/var/run/crai/crai.fastcgi";
-            http_host      = "0.0.0.0:80";
+            http_url       = "https://crai.foldr.nl";
         };
     }
