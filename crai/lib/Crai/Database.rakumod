@@ -571,6 +571,7 @@ method insert-encounter(
     self!sth(q:to/SQL/).execute(date-str($run-when), $archive-url);
         INSERT INTO encounters (run_when, archive_url)
         VALUES (?1, ?2)
+        ON CONFLICT DO NOTHING
         SQL
 }
 
