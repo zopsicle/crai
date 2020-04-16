@@ -14,6 +14,7 @@
         "Crai::Web::Home": "lib/Crai/Web/Home.rakumod",
         "Crai::Web::Layout": "lib/Crai/Web/Layout.rakumod",
         "Crai::Web::Psgi": "lib/Crai/Web/Psgi.rakumod",
+        "Crai::Web::Runs": "lib/Crai/Web/Runs.rakumod",
         "Crai::Web::Search": "lib/Crai/Web/Search.rakumod"
     },
     "depends": [

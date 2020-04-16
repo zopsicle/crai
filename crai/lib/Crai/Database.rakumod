@@ -588,6 +588,29 @@ method finish-run(
         SQL
 }
 
+method fetch-runs(
+    ::?CLASS:D:
+)
+{
+    my $sth := self!sth(q:to/SQL/);
+        SELECT
+            runs.[when] AS [when],
+            (
+                SELECT COUNT(*)
+                FROM   encounters
+                WHERE  encounters.run_when = runs.[when]
+            ) AS encounters
+
+        FROM
+            runs
+
+        ORDER BY
+            runs.[when] ASC
+        SQL
+    $sth.execute;
+    $sth.allrows(:array-of-hash);
+}
+
 method insert-warning(
     ::?CLASS:D:
     Str() $archive-url,
