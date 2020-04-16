@@ -14,6 +14,7 @@ my sub serve-psgi(%env, IO() :$database!)
     is export
 {
     my $dbh := DBIish.connect('SQLite', :$database);
+    LEAVE { $dbh.dispose if defined($dbh) }
     my $db  := Crai::Database.new(:$dbh);
 
     given %env<REQUEST_URI> {
