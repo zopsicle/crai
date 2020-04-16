@@ -325,7 +325,7 @@ method fetch-archive(
             ORDER BY author
             SQL
         $sth.execute(%archive<url>);
-        $sth.allrows.map(*[0]).list;
+        my @ = $sth.allrows.map(*[0]);
     };
 
     %archive<meta-provides> = do {
@@ -335,7 +335,7 @@ method fetch-archive(
             WHERE  archive_url = ?1
             SQL
         $sth.execute(%archive<url>);
-        $sth.allrows.map({ [=>] @^a }).hash;
+        my % = $sth.allrows.map({ [=>] @^a });
     };
 
     %archive<meta-depends> = do {
@@ -355,7 +355,7 @@ method fetch-archive(
             WHERE  archive_url = ?1
             SQL
         $sth.execute(%archive<url>);
-        $sth.allrows.map({ [=>] @^a }).hash;
+        my % = $sth.allrows.map({ [=>] @^a });
     };
 
     %archive<meta-resources> = do {
@@ -366,7 +366,7 @@ method fetch-archive(
             ORDER BY resource
             SQL
         $sth.execute(%archive<url>);
-        $sth.allrows.map(*[0]).list;
+        my @ = $sth.allrows.map(*[0]);
     };
 
     %archive<meta-tags> = do {
@@ -377,7 +377,7 @@ method fetch-archive(
             ORDER BY tag
             SQL
         $sth.execute(%archive<url>);
-        $sth.allrows.map(*[0]).list;
+        my @ = $sth.allrows.map(*[0]);
     };
 
     %archive;
