@@ -1,4 +1,5 @@
-{ curl, git, gnutar, lib, libressl, perl, raku, rakudo, rsync, sassc, sqlite }:
+{ curl, git, gnuplot, gnutar, lib, libressl, perl, raku, rakudo, rsync, sassc
+, sqlite }:
 let
     meta6 = builtins.fromJSON (builtins.readFile ./META6.json);
     get-depend = p: raku."${builtins.replaceStrings ["::"] ["-"] p}";
@@ -9,7 +10,7 @@ in
         buildInputs = [ sassc ];
         depends = map get-depend meta6.depends;
         preInstallPhase = ''
-            extraPATH=${git}/bin:${gnutar}/bin:${rsync}/bin
+            extraPATH=${git}/bin:${gnuplot}/bin:${gnutar}/bin:${rsync}/bin
             extraLD_LIBRARY_PATH=${lib.makeLibraryPath [ curl libressl sqlite ]}
 
             export PATH=$extraPATH:$PATH
