@@ -3,11 +3,16 @@ unit module Crai::Mirror;
 use LibCurl::Easy;
 use OpenSSL::Digest;
 
+my sub fmt-hash(Blob:D $_)
+{
+    .list.map(*.fmt('%02x')).join;
+}
+
 my sub archive-path(IO() $mirror, Str() $archive-url)
     is export
 {
     my $hash     := sha256($archive-url.encode);
-    my $basename := $hash.list.map(*.fmt('%02x')).join;
+    my $basename := fmt-hash($hash);
     $mirror.add($basename);
 }
 
@@ -26,6 +31,20 @@ my sub download-archive(LibCurl::Easy:D $curl, $mirror, $archive-url)
         $curl.perform;
     }
     $! // $archive-path;
+}
+
+my sub compute-hashes($mirror, $archive-url)
+    is export
+{
+    my $archive-path := archive-path($mirror, $archive-url);
+    try {
+        my $data := $archive-path.slurp(:bin);
+        my $md5    := fmt-hash md5($data);
+        my $sha1   := fmt-hash sha1($data);
+        my $sha256 := fmt-hash sha256($data);
+        return ($md5, $sha1, $sha256);
+    }
+    $!;
 }
 
 =begin pod
@@ -82,5 +101,10 @@ which you can smartmatch against:
         when IO::Path  { #`｢The archive was downloaded to $_｣ }
         when :present  { #`｢The archive was already in the mirror｣ }
     }
+
+=head2 compute-hashes($mirror, $archive-url)
+
+Compute the hashes for the already-downloaded archive C<$archive-url>.
+Three hashes are returned, as a list: MD5, SHA-1, and SHA-256.
 
 =end pod

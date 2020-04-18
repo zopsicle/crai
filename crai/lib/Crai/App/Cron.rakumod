@@ -15,6 +15,7 @@ my sub MAIN(
     Bool :$skip-list-cpan-archives,
     Bool :$skip-list-p6c-archives,
     Bool :$skip-download-archives,
+    Bool :$skip-compute-hashes,
     Bool :$skip-extract-meta,
     --> Nil
 )
@@ -55,6 +56,22 @@ my sub MAIN(
                 when Exception { put("! $_"); noflood }
                 when IO::Path  { put("→ $_"); noflood }
                 when :present  { put("✔️") }
+            }
+        }
+    }
+
+    unless $skip-compute-hashes {
+        for $db.fetch-archive-urls -> $archive-url {
+            print("$archive-url ");
+            given compute-hashes($mirror, $archive-url) {
+                when Exception {
+                    put("! $_");
+                }
+                when List {
+                    my %hashes = <hash-md5 hash-sha1 hash-sha256> Z=> $_;
+                    $db.update-archive-hashes($archive-url, |%hashes);
+                    put("✔");
+                }
             }
         }
     }
