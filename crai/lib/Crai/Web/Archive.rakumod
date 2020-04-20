@@ -50,7 +50,7 @@ my &template-archive := template :(:%archive!, :$nix, :$zef), q:to/HTML/;
 
     <h2 id="compunits">Compunits</h2>
     <ul>
-        <% for %archive<meta-provides>.keys -> $unit { %>
+        <% for %archive<meta-provides>.keys.collate -> $unit { %>
             <li><%= $unit %>
         <% } %>
     </ul>
