@@ -34,6 +34,7 @@ my &template-archive := template :(:%archive!, :$nix, :$zef), q:to/HTML/;
     </table>
 
     <h2 id="versions">Versions</h2>
+    <p>
     <% for %archive<meta-versions>[] -> (:key($url), :value($version)) { %>
         <% if $url eq %archive<url> { %>
             <strong><%= $version %></strong>
