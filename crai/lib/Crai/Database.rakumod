@@ -380,6 +380,18 @@ method fetch-archive(
         my @ = $sth.allrows.map(*[0]);
     };
 
+    %archive<meta-versions> = do {
+        my $sth := self!sth(q:to/SQL/);
+            SELECT   url,
+                     meta_version
+            FROM     archives
+            WHERE    meta_name = ?1
+            ORDER BY norm_version
+            SQL
+        $sth.execute(%archive<meta-name>);
+        my @ = $sth.allrows.map: { [=>] @^r };
+    };
+
     %archive;
 }
 

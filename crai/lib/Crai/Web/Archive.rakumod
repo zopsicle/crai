@@ -4,6 +4,8 @@ use Crai::Web::Layout;
 use Template::Classic;
 
 my &template-archive := template :(:%archive!, :$nix, :$zef), q:to/HTML/;
+    <% use URI::Escape; %>
+
     <h2 id="install">Install</h2>
     <table class="crai--properties">
         <tr><th>Nix     <td><%= $nix %>
@@ -30,6 +32,15 @@ my &template-archive := template :(:%archive!, :$nix, :$zef), q:to/HTML/;
             # nightmare that I do not want to get into. We’ll skip it.
         %>
     </table>
+
+    <h2 id="versions">Versions</h2>
+    <% for %archive<meta-versions>[] -> (:key($url), :value($version)) { %>
+        <% if $url eq %archive<url> { %>
+            <strong><%= $version %></strong>
+        <% } else { %>
+            <a href="/archive/<%= uri-escape($url) %>"><%= $version %></a>
+        <% } %>
+    <% } %>
 
     <h2 id="readme">Readme</h2>
     <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Qui,
